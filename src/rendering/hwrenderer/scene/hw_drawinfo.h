@@ -352,6 +352,16 @@ inline bool isDarkLightMode(ELightMode lightmode)
 	return lightmode == ELightMode::Doom || lightmode == ELightMode::DoomDark;
 }
 
+inline bool isDoomLightMode(ELightMode lightmode)
+{
+	return lightmode == ELightMode::Doom;
+}
+
+inline bool isDoomDarkLightMode(ELightMode lightmode)
+{
+	return lightmode == ELightMode::DoomDark;
+}
+
 int CalcLightLevel(ELightMode lightmode, int lightlevel, int rellight, bool weapon, int blendfactor);
 PalEntry CalcLightColor(ELightMode lightmode, int light, PalEntry pe, int blendfactor);
 float GetFogDensity(FLevelLocals* Level, ELightMode lightmode, int lightlevel, PalEntry fogcolor, int sectorfogdensity, int blendfactor);

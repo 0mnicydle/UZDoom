@@ -355,18 +355,37 @@ WeaponLighting HWDrawInfo::GetWeaponLighting(sector_t *viewsector, const DVector
 
 		l.lightlevel = CalcLightLevel(lightmode, l.lightlevel, getExtraLight(), true, 0);
 
-		if (isSoftwareLighting(lightmode) || l.lightlevel < 92)
-		{
-			// Korshun: the way based on max possible light level for sector like in software renderer.
-			double min_L = 36.0 / 31.0 - ((l.lightlevel / 255.0) * (63.0 / 31.0)); // Lightlevel in range 0-63
-			if (min_L < 0)
-				min_L = 0;
-			else if (min_L > 1.0)
-				min_L = 1.0;
+		if (isSoftwareLighting(lightmode) || isDoomLightMode(lightmode) && l.lightlevel < 92)
+			//0mnicydle: Weapons shouldn't be pitch black if the player is glowing.
+			if (l.lightlevel < 17 && l.lightlevel > 0)
+			{
+				l.lightlevel = 17;
+			}
+			else
+			{
+				// Korshun: the way based on max possible light level for sector like in software renderer.
+				double min_L = 36.0 / 31.0 - ((l.lightlevel / 255.0) * (63.0 / 31.0)); // Lightlevel in range 0-63
+				if (min_L < 0)
+					min_L = 0;
+				else if (min_L > 1.0)
+					min_L = 1.0;
 
-			l.lightlevel = int((1.0 - min_L) * 255);
+				l.lightlevel = int((1.0 - min_L) * 255);
+			}
+		//0mnicydle: Weapons shouldn't glow if the player isn't.
+		else if (isDoomDarkLightMode(lightmode) && l.lightlevel < 192)
+		{
+			if (l.lightlevel > 100)
+			{
+				l.lightlevel = xs_CRoundToInt(192.f - (192 - l.lightlevel)* 1.87f);
+			}
+			else
+			{
+				l.lightlevel /= 5;
+			}
 		}
-		else
+		//0mnicydle: Only Doom style lightmodes should get Doom style lightlevels.
+		else if (isDarkLightMode(lightmode))
 		{
 			l.lightlevel = (2 * l.lightlevel + 255) / 3;
 		}
